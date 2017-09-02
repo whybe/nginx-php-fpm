@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.0-apache
 
 # install the PHP extensions we need
 RUN set -ex; \
@@ -22,9 +22,9 @@ RUN set -ex; \
 WORKDIR /tmp
 RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
     && tar -zxf ioncube.tar.gz \
-    && mv ioncube/ioncube_loader_lin_7.1.so /usr/local/lib/php/extensions/* \
+    && mv ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/* \
     && rm -Rf ioncube.tar.gz ioncube \
-    && echo "zend_extension=ioncube_loader_lin_7.1.so" > /usr/local/etc/php/conf.d/00-ioncube-loader.ini
+    && echo "zend_extension=ioncube_loader_lin_7.0.so" > /usr/local/etc/php/conf.d/00-ioncube-loader.ini
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
