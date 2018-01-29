@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7.1-fpm
 
 # install the PHP extensions we need
 RUN set -ex; \
@@ -19,12 +19,13 @@ RUN set -ex; \
 # TODO consider removing the *-dev deps and only keeping the necessary lib* packages
 
 # install Ioncube
-WORKDIR /tmp
-RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-    && tar -zxf ioncube.tar.gz \
-    && mv ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/* \
-    && rm -Rf ioncube.tar.gz ioncube \
-    && echo "zend_extension=ioncube_loader_lin_7.0.so" > /usr/local/etc/php/conf.d/00-ioncube-loader.ini
+RUN set -xe \
+        && cd /tmp \
+        && curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+        && tar -zxf ioncube.tar.gz \
+        && mv ioncube/ioncube_loader_lin_7.1.so /usr/local/lib/php/extensions/* \
+        && rm -Rf ioncube.tar.gz ioncube \
+        && echo "zend_extension=ioncube_loader_lin_7.1.so" > /usr/local/etc/php/conf.d/00-ioncube-loader.ini
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -37,6 +38,11 @@ RUN { \
         echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-RUN a2enmod rewrite expires
+RUN { \
+        echo 'post_max_size=256M'; \
+        echo 'upload_max_filesize=256M'; \
+        echo 'memory_limit=256M'; \
+        echo 'variables_order="EGPCS"'; \
+    } > /usr/local/etc/php/conf.d/uploads.ini
 
-CMD ["apache2-foreground"]
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf

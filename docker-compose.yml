@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    build: ./nginx
+    image: whybe/nginx:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ./html:/var/www/html/
+    links:
+      - php-fpm
+
+  php-fpm:
+    build: ./php-fpm
+    image: whybe/php-fpm:latest
+    ports:
+      - 9000:9000
+    volumes:
+      - ./html:/var/www/html/
