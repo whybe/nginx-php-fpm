@@ -17,3 +17,5 @@ services:
       - 9000:9000
     volumes:
       - ./html:/var/www/html/
+    env_file:
+      - .env
